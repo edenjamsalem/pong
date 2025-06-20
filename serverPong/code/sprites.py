@@ -4,10 +4,8 @@ from utils import Rect
 import time
 import numpy as np
 
-class Paddle(pygame.sprite.Sprite):
+class Paddle():
     def __init__(self):
-        super().__init__()
-
         # image 
         self.image = pygame.Surface(SIZE['paddle'], pygame.SRCALPHA)
         pygame.draw.rect(self.image, COLOURS['paddle'], pygame.FRect((0,0), SIZE['paddle']), 0, 4)
@@ -52,9 +50,8 @@ class Opponent(Paddle):
     def get_direction(self):
         self.direction = 1 if self.ball.rect.centery > self.rect.centery else - 1
 
-class Ball(pygame.sprite.Sprite):
+class Ball():
     def __init__(self, paddle_sprites, update_score):
-        super().__init__()
         self.paddle_sprites = paddle_sprites
         self.update_score = update_score
 

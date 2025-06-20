@@ -58,18 +58,13 @@ class Game:
             
             # update 
             self.all_sprites.update(dt)
-            # self.player1.update(dt)
-            # self.player2.update(dt)
-            # self.ball.update(dt)
 
             # draw 
             self.display_surface.fill(COLOURS['bg'])
             self.display_score()
             self.all_sprites.draw()
-            # self.display_surface.blit(self.player1.image, (self.player1.rect.x, self.player1.rect.y))
-            # self.display_surface.blit(self.player2.image, (self.player2.rect.x, self.player2.rect.y))
-            # self.display_surface.blit(self.ball.image, (self.ball.rect.x, self.ball.rect.y))
             pygame.display.update()
+            
         pygame.quit()
 
 if __name__ == '__main__':
