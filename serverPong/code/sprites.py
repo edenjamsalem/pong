@@ -6,11 +6,6 @@ import numpy as np
 
 class Paddle():
     def __init__(self):
-        # image 
-        self.image = pygame.Surface(SIZE['paddle'], pygame.SRCALPHA)
-        pygame.draw.rect(self.image, COLOURS['paddle'], pygame.FRect((0,0), SIZE['paddle']), 0, 4)
-
-        # rect & movement
         self.rect = Rect(POS['player1'][0], POS['player1'][1], SIZE['paddle'][0], SIZE['paddle'][1])
         self.old_rect = self.rect.instance()
         self.direction = 0
@@ -34,30 +29,23 @@ class Player(Paddle):
         self.speed = SPEED['player']
 
     def get_direction(self):
-        keys = pygame.key.get_pressed()
-        if (self.player == 'player1'):
-            self.direction = int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP])
-        else:
-            self.direction = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
+        # need to get movement via API here
+        pass
 
-class Opponent(Paddle):
-    def __init__(self, ball):
-        super().__init__()
-        self.speed = SPEED['opponent']
-        self.rect.center = POS['opponent']
-        self.ball = ball
+# class Opponent(Paddle):
+#     def __init__(self, ball):
+#         super().__init__()
+#         self.speed = SPEED['opponent']
+#         self.rect.center = POS['opponent']
+#         self.ball = ball
 
-    def get_direction(self):
-        self.direction = 1 if self.ball.rect.centery > self.rect.centery else - 1
+#     def get_direction(self):
+#         self.direction = 1 if self.ball.rect.centery > self.rect.centery else - 1
 
 class Ball():
     def __init__(self, paddle_sprites, update_score):
         self.paddle_sprites = paddle_sprites
         self.update_score = update_score
-
-        # image 
-        self.image = pygame.Surface(SIZE['ball'], pygame.SRCALPHA)
-        pygame.draw.circle(self.image, COLOURS['ball'], (SIZE['ball'][0] / 2,SIZE['ball'][1] / 2), SIZE['ball'][0] / 2)
 
         # rect & movement
         self.rect = Rect(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, SIZE['ball'][0], SIZE['ball'][1])
