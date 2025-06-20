@@ -1,6 +1,7 @@
 from settings import * 
 from random import choice, uniform
 from rect import Rect
+import time
 
 class Paddle(pygame.sprite.Sprite):
     def __init__(self):
@@ -68,7 +69,7 @@ class Ball(pygame.sprite.Sprite):
         self.speed_modifier = 0
     
         # timer 
-        self.start_time = pygame.time.get_ticks()
+        self.start_time = time.time() * 1000
         self.duration = 1200
 
     def move(self, dt):
@@ -112,10 +113,10 @@ class Ball(pygame.sprite.Sprite):
         self.rect.x = WINDOW_WIDTH / 2
         self.rect.y = WINDOW_HEIGHT / 2
         self.direction = pygame.Vector2(choice((1,-1)),uniform(0.7, 0.8) * choice((-1,1)))
-        self.start_time = pygame.time.get_ticks()
+        self.start_time = time.time() * 1000
 
     def timer(self):
-        if pygame.time.get_ticks() - self.start_time >= self.duration:
+        if time.time() * 1000 - self.start_time >= self.duration:
             self.speed_modifier = 1
         else:
             self.speed_modifier = 0
