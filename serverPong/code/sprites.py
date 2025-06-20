@@ -2,6 +2,7 @@ from settings import *
 from random import choice, uniform
 from utils import Rect
 import time
+import numpy as np
 
 class Paddle(pygame.sprite.Sprite):
     def __init__(self):
@@ -64,7 +65,7 @@ class Ball(pygame.sprite.Sprite):
         # rect & movement
         self.rect = Rect(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, SIZE['ball'][0], SIZE['ball'][1])
         self.old_rect = self.rect.instance()
-        self.direction = pygame.Vector2(choice((1,-1)),uniform(0.7, 0.8) * choice((-1,1)))
+        self.direction = np.array([choice((1,-1)), uniform(0.7, 0.8) * choice((-1,1))])
         self.speed_modifier = 0
     
         # timer 
@@ -72,9 +73,9 @@ class Ball(pygame.sprite.Sprite):
         self.duration = 1200
 
     def move(self, dt):
-        self.rect.x += self.direction.x * SPEED['ball'] * dt * self.speed_modifier
+        self.rect.x += self.direction[0] * SPEED['ball'] * dt * self.speed_modifier
         self.collision('horizontal')
-        self.rect.y += self.direction.y * SPEED['ball'] * dt * self.speed_modifier
+        self.rect.y += self.direction[1] * SPEED['ball'] * dt * self.speed_modifier
         self.collision('vertical')
     
     def collision(self, direction):
@@ -83,26 +84,26 @@ class Ball(pygame.sprite.Sprite):
                 if direction == 'horizontal':
                     if self.rect.right >= sprite.rect.left and self.old_rect.right <= sprite.old_rect.left:
                         self.rect.right = sprite.rect.left
-                        self.direction.x *= -1
+                        self.direction[0] *= -1
                     if self.rect.left <= sprite.rect.right and self.old_rect.left >= sprite.old_rect.right:
                         self.rect.left = sprite.rect.right
-                        self.direction.x *= -1
+                        self.direction[0] *= -1
                 else:
                     if self.rect.bottom >= sprite.rect.top and self.old_rect.bottom <= sprite.old_rect.top:
                         self.rect.bottom = sprite.rect.top
-                        self.direction.y *= -1
+                        self.direction[1] *= -1
                     if self.rect.top <= sprite.rect.bottom and self.old_rect.top >= sprite.old_rect.bottom:
                         self.rect.top = sprite.rect.bottom
-                        self.direction.y *= -1
+                        self.direction[1] *= -1
 
     def wall_collision(self):
         if self.rect.top <= 0:
             self.rect.top = 0
-            self.direction.y *= -1
+            self.direction[1] *= -1
         
         if self.rect.bottom >= WINDOW_HEIGHT:
             self.rect.bottom = WINDOW_HEIGHT
-            self.direction.y *= -1
+            self.direction[1] *= -1
         
         if self.rect.right >= WINDOW_WIDTH or self.rect.left <= 0:
             self.update_score('player' if self.rect.x < WINDOW_WIDTH / 2 else 'opponent')
@@ -111,7 +112,7 @@ class Ball(pygame.sprite.Sprite):
     def reset(self):
         self.rect.x = WINDOW_WIDTH / 2
         self.rect.y = WINDOW_HEIGHT / 2
-        self.direction = pygame.Vector2(choice((1,-1)),uniform(0.7, 0.8) * choice((-1,1)))
+        self.direction = np.array([choice((1,-1)), uniform(0.7, 0.8) * choice((-1,1))])
         self.start_time = time.time() * 1000
 
     def timer(self):
