@@ -1,7 +1,6 @@
 from settings import * 
 from sprites import * 
-from pygame import Clock
-from rect import Rect
+from utils import Clock
 import json
 
 class Game:

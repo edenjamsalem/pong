@@ -1,6 +1,6 @@
 from settings import * 
 from random import choice, uniform
-from rect import Rect
+from utils import Rect
 import time
 
 class Paddle(pygame.sprite.Sprite):
