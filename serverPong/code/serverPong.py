@@ -1,6 +1,6 @@
 from settings import * 
 from sprites import * 
-from utils import Clock
+from utils import Clock, Group
 import json
 
 class Game:
@@ -10,11 +10,17 @@ class Game:
         pygame.display.set_caption('Pong')
         self.clock = Clock()
         self.running = True
-    
+
         # sprites 
         self.player1 = Player('player1')
         self.player2 = Player('player2')
         self.ball = Ball((self.player1, self.player2), self.update_score)
+                    
+        # groups
+        self.all_sprites = Group(self.display_surface)
+        self.all_sprites.add(self.player1)
+        self.all_sprites.add(self.player2)
+        self.all_sprites.add(self.ball)
 
         # score 
         try:
@@ -51,16 +57,18 @@ class Game:
                         json.dump(self.score, score_file)
             
             # update 
-            self.player1.update(dt)
-            self.player2.update(dt)
-            self.ball.update(dt)
+            self.all_sprites.update(dt)
+            # self.player1.update(dt)
+            # self.player2.update(dt)
+            # self.ball.update(dt)
 
             # draw 
             self.display_surface.fill(COLOURS['bg'])
             self.display_score()
-            self.display_surface.blit(self.player1.image, (self.player1.rect.x, self.player1.rect.y))
-            self.display_surface.blit(self.player2.image, (self.player2.rect.x, self.player2.rect.y))
-            self.display_surface.blit(self.ball.image, (self.ball.rect.x, self.ball.rect.y))
+            self.all_sprites.draw()
+            # self.display_surface.blit(self.player1.image, (self.player1.rect.x, self.player1.rect.y))
+            # self.display_surface.blit(self.player2.image, (self.player2.rect.x, self.player2.rect.y))
+            # self.display_surface.blit(self.ball.image, (self.ball.rect.x, self.ball.rect.y))
             pygame.display.update()
         pygame.quit()
 

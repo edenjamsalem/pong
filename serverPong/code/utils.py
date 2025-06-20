@@ -73,3 +73,19 @@ class Rect:
 
 	def instance(self):
 		return Rect(self.x, self.y, self.w, self.h)
+
+class Group:
+	def __init__(self, display_surface):
+		self.sprites = []
+		self.display_surface = display_surface
+
+	def add(self, sprite):
+		self.sprites.append(sprite)
+
+	def update(self, dt):
+		for sprite in self.sprites:
+			sprite.update(dt)
+
+	def draw(self):
+		for sprite in self.sprites:
+			self.display_surface.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
