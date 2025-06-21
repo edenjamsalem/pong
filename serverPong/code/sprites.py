@@ -84,7 +84,7 @@ class Ball():
         self.direction = np.array([choice((1,-1)), uniform(0.7, 0.8) * choice((-1,1))])
         self.start_time = time.time() * 1000
 
-    def timer(self):
+    def delay_timer(self):
         if (time.time() * 1000) - self.start_time >= self.duration:
             self.speed_modifier = 1
         else:
@@ -92,6 +92,6 @@ class Ball():
 
     def update(self, dt):
         self.old_rect.copy(self.rect)
-        self.timer()
+        self.delay_timer()
         self.move(dt)
         self.wall_collision()

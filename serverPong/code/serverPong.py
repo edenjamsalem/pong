@@ -5,11 +5,12 @@ from queue import SimpleQueue
 import json
 
 class Game:
-    def __init__(self, id):
+    def __init__(self, id, broadcast_callback):
         self.id = id
         self.clock = Clock()
         self.running = True
         self.queue = SimpleQueue()
+        self.broadcast_state = broadcast_callback
 
         # sprites 
         self.player1 = Player('player1')
@@ -34,9 +35,6 @@ class Game:
         self.state['ball']['y'] = self.ball.rect.y
         # need to send a 'dy = 0' API request on player's keyup !
 
-    def _broadcast_state(self):
-        pass
-
     def _process_queue(self):
         while not self.queue.empty():
             player, movement = self.queue.get_nowait()
@@ -45,6 +43,9 @@ class Game:
     # called externally by server only upon API post request
     def queue_movement(self, player, dy):
         self.queue.put((player, dy))
+
+    def get_state(self):
+        return (self.state.copy())
 
     def run(self):
         while self.running:
@@ -57,7 +58,7 @@ class Game:
             self.ball.update(dt)
             self._update_state()
             
-            self._broadcast_state()
+            self.broadcast_state(self.id, self.state)
 
 if __name__ == '__main__':
     game = Game()
