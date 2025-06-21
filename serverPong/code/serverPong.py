@@ -38,7 +38,7 @@ class Game:
     def _process_queue(self):
         while not self.queue.empty():
             player, movement = self.queue.get_nowait()
-            self.state[player]['dy'] += movement
+            self.state[player]['dy'] = movement
 
     # called externally by server only upon API post request
     def queue_movement(self, player, dy):
