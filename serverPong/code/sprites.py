@@ -8,17 +8,15 @@ class Paddle():
     def __init__(self):
         self.rect = Rect(POS['player1'][0], POS['player1'][1], SIZE['paddle'][0], SIZE['paddle'][1])
         self.old_rect = self.rect.instance()
-        self.direction = 0
     
-    def move(self, dt):
-        self.rect.y += self.direction * self.speed * dt
+    def move(self, dt, dy):
+        self.rect.y += dy * self.speed * dt
         self.rect.top = 0 if self.rect.top < 0 else self.rect.top
         self.rect.bottom = WINDOW_HEIGHT if self.rect.bottom > WINDOW_HEIGHT else self.rect.bottom   
 
-    def update(self, dt):
+    def update(self, dt, dy):
         self.old_rect.copy(self.rect)
-        self.get_direction()
-        self.move(dt)
+        self.move(dt, dy)
 
 class Player(Paddle):
     def __init__(self, player):
@@ -27,20 +25,6 @@ class Player(Paddle):
         self.rect.x = POS[self.player][0]
         self.rect.y = POS[self.player][1]
         self.speed = SPEED['player']
-
-    def get_direction(self):
-        # need to get movement via API here
-        pass
-
-# class Opponent(Paddle):
-#     def __init__(self, ball):
-#         super().__init__()
-#         self.speed = SPEED['opponent']
-#         self.rect.center = POS['opponent']
-#         self.ball = ball
-
-#     def get_direction(self):
-#         self.direction = 1 if self.ball.rect.centery > self.rect.centery else - 1
 
 class Ball():
     def __init__(self, paddle_sprites, update_score):
@@ -70,14 +54,14 @@ class Ball():
                     if self.rect.right >= sprite.rect.left and self.old_rect.right <= sprite.old_rect.left:
                         self.rect.right = sprite.rect.left
                         self.direction[0] *= -1
-                    if self.rect.left <= sprite.rect.right and self.old_rect.left >= sprite.old_rect.right:
+                    elif self.rect.left <= sprite.rect.right and self.old_rect.left >= sprite.old_rect.right:
                         self.rect.left = sprite.rect.right
                         self.direction[0] *= -1
                 else:
                     if self.rect.bottom >= sprite.rect.top and self.old_rect.bottom <= sprite.old_rect.top:
                         self.rect.bottom = sprite.rect.top
                         self.direction[1] *= -1
-                    if self.rect.top <= sprite.rect.bottom and self.old_rect.top >= sprite.old_rect.bottom:
+                    elif self.rect.top <= sprite.rect.bottom and self.old_rect.top >= sprite.old_rect.bottom:
                         self.rect.top = sprite.rect.bottom
                         self.direction[1] *= -1
 
