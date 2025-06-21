@@ -85,7 +85,7 @@ class Ball():
         self.start_time = time.time() * 1000
 
     def timer(self):
-        if time.time() * 1000 - self.start_time >= self.duration:
+        if (time.time() * 1000) - self.start_time >= self.duration:
             self.speed_modifier = 1
         else:
             self.speed_modifier = 0
