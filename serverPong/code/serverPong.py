@@ -16,24 +16,16 @@ class Game:
         self.player2 = Player('player2')
         self.ball = Ball((self.player1, self.player2), self.update_score)
 
-        # score 
-        try:
-            with open(join('data', 'score.txt')) as score_file:
-                self.score = json.load(score_file)
-        except:
-            self.score = {'player': 0, 'opponent': 0}
-
         # game state
         self.state = {
             "player1": {'y': self.player1.rect.y, 'dy': 0},
             "player2": {'y': self.player2.rect.y, 'dy': 0},
             "ball": {'x': self.ball.rect.x, 'y': self.ball.rect.y},
-            "score": {'player': 0, 'player2': 0}
+            "score": {'player1': 0, 'player2': 0}
         }
 
-
-    def update_score(self, side):
-        self.score['player' if side == 'player' else 'opponent'] += 1
+    def update_score(self, player):
+        self.state['score'][player] += 1
 
     def update_state(self):
         self.state['player1']['y'] = self.player1.rect.y

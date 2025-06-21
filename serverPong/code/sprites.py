@@ -75,9 +75,9 @@ class Ball():
             self.direction[1] *= -1
         
         if self.rect.right >= WINDOW_WIDTH or self.rect.left <= 0:
-            self.update_score('player' if self.rect.x < WINDOW_WIDTH / 2 else 'opponent')
+            self.update_score('player1' if self.rect.x < WINDOW_WIDTH / 2 else 'player2')
             self.reset()
-    
+        
     def reset(self):
         self.rect.x = WINDOW_WIDTH / 2
         self.rect.y = WINDOW_HEIGHT / 2
