@@ -1,8 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, WebSocket, HTTPException
 from pydantic import BaseModel
 from uuid import uuid4
 from threading import Thread
-from serverPong import Game
+from ..gameLogic.game import Game
+from gameSession import GameSession
 
 class PlayerInput(BaseModel):
     player: str
@@ -10,14 +11,23 @@ class PlayerInput(BaseModel):
 
 app = FastAPI()
 
-# Store all active games
-games: dict[str, Game] = {}
+# Store all active games & clients
+game_sessions = {}
 
+
+@app.websocket("ws")
+async def websocket_endpoint(ws: WebSocket):
+    await ws.accept()
+
+    while True:
+        data = ws.receive_json()
+
+# Endpoints
 @app.post("/games")
 def create_game():
     game_id = str(uuid4())
     game = Game(game_id)
-    games[game_id] = game
+    game_sessions[game_id] = GameSession(game)
 
     thread = Thread(target=game.run, daemon=True)
     thread.start()
@@ -25,16 +35,17 @@ def create_game():
 
 @app.get("/games/{game_id}/state")
 def get_game_state(game_id: str):
-    if game_id not in games:
+    if game_id not in game_sessions:
         raise HTTPException(status_code=404, detail="Item not found")
-    return games[game_id].get_state()
+    return game_sessions[game_id].get_state()
 
 @app.put("/games/{game_id}/input")
-def put_user_input(game_id:str, input: PlayerInput):
-    if game_id not in games:
+def put_user_input(game_id:str, userInput: PlayerInput):
+    if game_id not in game_sessions:
         raise HTTPException(status_code=404, detail="Item not found")
-    games[game_id].queue_movement(input.player, input.dy)
+    game_sessions[game_id].queue_movement(userInput.player, userInput.dy)
     return {"status": "input queued"}
+
 
 # Handles creating new games and joining a game
 	# POST /games           → Create a new game

@@ -2,10 +2,9 @@ from settings import *
 from sprites import * 
 from utils import Clock
 from queue import SimpleQueue
-import json
 
 class Game:
-    def __init__(self, id, broadcast_callback):
+    def __init__(self, id, mode, broadcast_callback):
         self.id = id
         self.clock = Clock()
         self.running = True
@@ -14,7 +13,10 @@ class Game:
 
         # sprites 
         self.player1 = Player('player1')
-        self.player2 = Player('player2')
+        if mode == 'two_player':
+            self.player2 = Player('player2')
+        # elif mode == 'single_player':
+        #     self.player2 = AIBot()
         self.ball = Ball((self.player1, self.player2), self._update_score)
 
         # game state
@@ -25,6 +27,7 @@ class Game:
             "score": {'player1': 0, 'player2': 0}
         }
 
+    # private methods
     def _update_score(self, player):
         self.state['score'][player] += 1
 
@@ -40,7 +43,7 @@ class Game:
             player, movement = self.queue.get_nowait()
             self.state[player]['dy'] = movement
 
-    # called externally by server only upon API post request
+    # public methods
     def queue_movement(self, player, dy):
         self.queue.put((player, dy))
 
