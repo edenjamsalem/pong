@@ -11,7 +11,7 @@ class Client():
 
 	def run(self):
 		while self.running:
-			# handle any queue'd server state updates
+			# handle any queued server state updates
 			# render the graphic
 			# get user input & send API put requests to server
 			pass

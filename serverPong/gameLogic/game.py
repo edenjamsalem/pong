@@ -47,8 +47,8 @@ class Game(ABC):
 
     def get_state(self):
         return {
-            "player_left": {'y': self.players[0].rect.y, 'score': self.players[0].score,},
-            "player_right": {'y': self.players[1].rect.y, 'score': self.players[1].score,},
+            "paddle_left": {'y': self.players[0].rect.y, 'score': self.players[0].score,},
+            "paddle_right": {'y': self.players[1].rect.y, 'score': self.players[1].score,},
             "ball": {'x': self.ball.rect.x, 'y': self.ball.rect.y},
         }
 
