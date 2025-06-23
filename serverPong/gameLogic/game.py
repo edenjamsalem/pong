@@ -7,48 +7,42 @@ class Game:
     def __init__(self, id, mode, broadcast_callback):
         self.id = id
         self.clock = Clock()
-        self.running = True
         self.queue = SimpleQueue()
-        self.broadcast_state = broadcast_callback
+        self.running = True
+        # self.broadcast_state = broadcast_callback
 
         # sprites 
-        self.player1 = Player('player1')
-        if mode == 'two_player':
-            self.player2 = Player('player2')
-        # elif mode == 'single_player':
-        #     self.player2 = AIBot()
-        self.ball = Ball((self.player1, self.player2), self._update_score)
-
-        self.score = {'player1': 0, 'player2': 0}
+        self.players = (Player(side = LEFT_PADDLE), Player(side = RIGHT_PADDLE))
+        self.ball = Ball((self.players[0], self.players[1]), self._update_score)
 
     # private methods
-    def _update_score(self, player):
-        pass
+    def _update_score(self, side):
+        self.players[side].score += 1
 
-    def _process_queue(self):
+    def _process_queue(self, dt):
         while not self.queue.empty():
-            player, movement = self.queue.get_nowait()
+            player_id, dy = self.queue.get_nowait()
+            self.players[player_id].update(dt, dy)
 
     # public methods
-    def queue_movement(self, player, dy):
-        self.queue.put((player, dy))
+    def queue_movement(self, side, dy):
+        self.queue.put((side, dy))
 
     def get_state(self):
-        return ()
+        return {
+            "player1": {'y': self.players[0].rect.y, 'score': self.players[0].score,},
+            "player2": {'y': self.players[1].rect.y, 'score': self.players[1].score,},
+            "ball": {'x': self.ball.rect.x, 'y': self.ball.rect.y},
+        }
 
     def run(self):
         while self.running:
             dt = self.clock.tick() / 1000
-            self._process_queue()
-            
-            # update
-            self.player1.update(dt, self.state['player1']['dy'])
-            self.player2.update(dt, self.state['player2']['dy'])
+            self._process_queue(dt)
             self.ball.update(dt)
-            self._update_state()
             
-            self.broadcast_state(self.id, self.state)
+            # self.broadcast_state(self.id, self.state)
 
-if __name__ == '__main__':
-    game = Game()
-    game.run()
+# if __name__ == '__main__':
+#     game = Game()
+#     game.run()

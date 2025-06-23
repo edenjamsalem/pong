@@ -5,9 +5,9 @@ from threading import Thread
 from ..gameLogic.game import Game
 from gameSession import GameSession
 
-class PlayerInput(BaseModel):
-    player: str
-    dy: int
+class Player(BaseModel):
+    ID: int
+    dy: float
 
 app = FastAPI()
 
@@ -40,10 +40,10 @@ def get_game_state(game_id: str):
     return game_sessions[game_id].get_state()
 
 @app.put("/games/{game_id}/input")
-def put_user_input(game_id:str, userInput: PlayerInput):
+def put_user_input(game_id:str, player: Player):
     if game_id not in game_sessions:
         raise HTTPException(status_code=404, detail="Item not found")
-    game_sessions[game_id].queue_movement(userInput.player, userInput.dy)
+    game_sessions[game_id].queue_movement(player.ID, player.dy)
     return {"status": "input queued"}
 
 

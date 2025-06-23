@@ -6,7 +6,7 @@ import numpy as np
 
 class Paddle():
     def __init__(self):
-        self.rect = Rect(POS['player1'][0], POS['player1'][1], SIZE['paddle'][0], SIZE['paddle'][1])
+        self.rect = Rect(POS[LEFT_PADDLE][0], POS[LEFT_PADDLE][1], SIZE['paddle'][0], SIZE['paddle'][1])
         self.old_rect = self.rect.instance()
     
     def move(self, dt, dy):
@@ -19,12 +19,13 @@ class Paddle():
         self.move(dt, dy)
 
 class Player(Paddle):
-    def __init__(self, player):
+    def __init__(self, side):
         super().__init__()
-        self.player = player
-        self.rect.x = POS[self.player][0]
-        self.rect.y = POS[self.player][1]
+        self.side = side
+        self.rect.x = POS[self.side][0]
+        self.rect.y = POS[self.side][1]
         self.speed = SPEED['player']
+        self.score = 0
 
 class Ball():
     def __init__(self, paddle_sprites, update_score):
@@ -75,7 +76,7 @@ class Ball():
             self.direction[1] *= -1
         
         if self.rect.right >= WINDOW_WIDTH or self.rect.left <= 0:
-            self.update_score('player1' if self.rect.x < WINDOW_WIDTH / 2 else 'player2')
+            self.update_score(LEFT_PADDLE if self.rect.x < WINDOW_WIDTH / 2 else RIGHT_PADDLE)
             self.reset()
         
     def reset(self):
