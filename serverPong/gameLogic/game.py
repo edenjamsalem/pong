@@ -1,6 +1,6 @@
 from settings import * 
 from sprites import * 
-from utils import Clock
+from serverPong.utils import Clock
 from queue import SimpleQueue
 from abc import ABC, abstractmethod
 from ..server.gameSession import Input

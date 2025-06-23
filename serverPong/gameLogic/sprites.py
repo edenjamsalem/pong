@@ -1,6 +1,6 @@
 from settings import * 
 from random import choice, uniform
-from utils import Rect
+from serverPong.utils import Rect
 import time
 import numpy as np
 from abc import ABC

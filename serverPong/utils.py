@@ -1,11 +1,10 @@
-from settings import *
 import time
 
 class Clock:
     def __init__(self):
         self.last_time = time.time()
 
-    def tick(self, fps=0):
+    def tick(self, fps = 0):
         current_time = time.time()
         delta = current_time - self.last_time
         self.last_time = current_time
