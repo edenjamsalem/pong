@@ -80,9 +80,9 @@ class TwoPlayer(Game):
         self._process_queue(dt)
         self.ball.update(dt)
 
-
 class Tournament(Game):
     pass
+
 
 # if __name__ == '__main__':
 #     game = Game()
