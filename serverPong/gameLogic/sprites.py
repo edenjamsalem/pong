@@ -39,8 +39,8 @@ class AIBot(Paddle):
         pass
 
 class Ball():
-    def __init__(self, paddle_sprites, update_score):
-        self.paddle_sprites = paddle_sprites
+    def __init__(self, players, update_score):
+        self.players = players
         self.update_score = update_score
 
         # rect & movement
@@ -59,21 +59,21 @@ class Ball():
         self.collision('vertical')
     
     def collision(self, direction):
-        for sprite in self.paddle_sprites:
-            if self.rect.colliderect(sprite.rect):
+        for paddle in self.players:
+            if self.rect.colliderect(paddle.rect):
                 if direction == 'horizontal':
-                    if self.rect.right >= sprite.rect.left and self.old_rect.right <= sprite.old_rect.left:
-                        self.rect.right = sprite.rect.left
+                    if self.rect.right >= paddle.rect.left and self.old_rect.right <= paddle.old_rect.left:
+                        self.rect.right = paddle.rect.left
                         self.direction[0] *= -1
-                    elif self.rect.left <= sprite.rect.right and self.old_rect.left >= sprite.old_rect.right:
-                        self.rect.left = sprite.rect.right
+                    elif self.rect.left <= paddle.rect.right and self.old_rect.left >= paddle.old_rect.right:
+                        self.rect.left = paddle.rect.right
                         self.direction[0] *= -1
                 else:
-                    if self.rect.bottom >= sprite.rect.top and self.old_rect.bottom <= sprite.old_rect.top:
-                        self.rect.bottom = sprite.rect.top
+                    if self.rect.bottom >= paddle.rect.top and self.old_rect.bottom <= paddle.old_rect.top:
+                        self.rect.bottom = paddle.rect.top
                         self.direction[1] *= -1
-                    elif self.rect.top <= sprite.rect.bottom and self.old_rect.top >= sprite.old_rect.bottom:
-                        self.rect.top = sprite.rect.bottom
+                    elif self.rect.top <= paddle.rect.bottom and self.old_rect.top >= paddle.old_rect.bottom:
+                        self.rect.top = paddle.rect.bottom
                         self.direction[1] *= -1
 
     def wall_collision(self):

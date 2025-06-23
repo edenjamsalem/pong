@@ -15,7 +15,7 @@ class Game(ABC):
 
         # sprites 
         self._init_players()
-        self.ball = Ball((self.players[0], self.players[1]), self._update_score)
+        self.ball = Ball(self.players, self._update_score)
 
     # private methods
     def _update_score(self, side):
@@ -56,7 +56,7 @@ class Game(ABC):
         while self.running:
             dt = self.clock.tick() / 1000
             self._update_state(dt)
-            # self.broadcast_state(self.id, self.state)
+            # self.broadcast_state()
 
 class SinglePlayer(Game):
     def _init_players(self):
