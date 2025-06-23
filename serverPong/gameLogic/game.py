@@ -29,6 +29,10 @@ class Game(ABC):
         while not self.queue.empty():
             player, dy = self.queue.get_nowait()
             self.players[player].update(dt, dy)
+    
+    @abstractmethod
+    def _update_state(self, dt):
+        pass
 
     # public methods
     def queue_movement(self, side, dy):
@@ -40,37 +44,33 @@ class Game(ABC):
             "player_right": {'y': self.players[1].rect.y, 'score': self.players[1].score,},
             "ball": {'x': self.ball.rect.x, 'y': self.ball.rect.y},
         }
-    
-    @abstractmethod
-    def update_state(self, dt):
-        pass
 
     def run(self):
         while self.running:
             dt = self.clock.tick() / 1000
-            self.update_state(dt)
+            self._update_state(dt)
             # self.broadcast_state(self.id, self.state)
 
 class SinglePlayer(Game):
     def _init_players(self):
         self.players = (Player(side = LEFT_PADDLE), AIBot(side = RIGHT_PADDLE))
     
-    def update_state(self, dt):
+    def _update_state(self, dt):
         self._process_queue(dt)
         self.players[RIGHT_PADDLE].update(dt)
         self.ball.update(dt)
 
+# the current implementation should work for both local and remote 2 player
 class TwoPlayer(Game):
     def _init_players(self):
         self.players = (Player(side = LEFT_PADDLE), Player(side = RIGHT_PADDLE))
     
-    def update_state(self, dt):
+    def _update_state(self, dt):
         self._process_queue(dt)
         self.ball.update(dt)
 
 class Tournament(Game):
     pass
-
 
 # if __name__ == '__main__':
 #     game = Game()
