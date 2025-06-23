@@ -40,7 +40,6 @@ class Ball():
     
         # timer 
         self.start_time = time.time() * 1000
-        self.duration = 1200
 
     def move(self, dt):
         self.rect.x += self.direction[0] * SPEED['ball'] * dt * self.speed_modifier
@@ -76,7 +75,7 @@ class Ball():
             self.direction[1] *= -1
         
         if self.rect.right >= WINDOW_WIDTH or self.rect.left <= 0:
-            self.update_score(LEFT_PADDLE if self.rect.x < WINDOW_WIDTH / 2 else RIGHT_PADDLE)
+            self.update_score(RIGHT_PADDLE if self.rect.x < WINDOW_WIDTH / 2 else LEFT_PADDLE)
             self.reset()
         
     def reset(self):
@@ -86,7 +85,7 @@ class Ball():
         self.start_time = time.time() * 1000
 
     def delay_timer(self):
-        if (time.time() * 1000) - self.start_time >= self.duration:
+        if (time.time() * 1000) - self.start_time >= START_DELAY:
             self.speed_modifier = 1
         else:
             self.speed_modifier = 0

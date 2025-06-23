@@ -20,9 +20,10 @@ class Game:
         self.players[side].score += 1
 
     def _process_queue(self, dt):
+        # need to add input validation
         while not self.queue.empty():
-            player_id, dy = self.queue.get_nowait()
-            self.players[player_id].update(dt, dy)
+            player, dy = self.queue.get_nowait()
+            self.players[player].update(dt, dy)
 
     # public methods
     def queue_movement(self, side, dy):
