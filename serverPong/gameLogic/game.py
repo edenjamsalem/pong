@@ -3,6 +3,7 @@ from sprites import *
 from utils import Clock
 from queue import SimpleQueue
 from abc import ABC, abstractmethod
+from ..server.gameSession import Command
 
 class Game(ABC):
     def __init__(self, id, broadcast_callback):
@@ -27,16 +28,20 @@ class Game(ABC):
     def _process_queue(self, dt):
         # need to add input validation
         while not self.queue.empty():
-            player, dy = self.queue.get_nowait()
-            self.players[player].update(dt, dy)
+            command = self.queue.get_nowait()
+            if command.type == 'movement':
+                self.players[command.side].update(dt, command.dy)
+            elif command.type == 'quit':
+                # need to handle properly
+                self.running = False
     
     @abstractmethod
     def _update_state(self, dt):
         pass
 
     # public methods
-    def queue_movement(self, side, dy):
-        self.queue.put((side, dy))
+    def enqueue(self, command: Command):
+        self.queue.put(command)
 
     def get_state(self):
         return {
@@ -60,7 +65,7 @@ class SinglePlayer(Game):
         self.players[RIGHT_PADDLE].update(dt)
         self.ball.update(dt)
 
-# the current implementation should work for both local and remote 2 player
+# the current implementation should work for both local and remote players
 class TwoPlayer(Game):
     def _init_players(self):
         self.players = (Player(side = LEFT_PADDLE), Player(side = RIGHT_PADDLE))
