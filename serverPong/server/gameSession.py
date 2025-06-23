@@ -2,7 +2,7 @@ from ..gameLogic.game import Game
 from fastapi import WebSocket
 from pydantic import BaseModel
 
-class Command(BaseModel):
+class Input(BaseModel):
     type: str
     side: int
     dy: float
@@ -11,7 +11,7 @@ class Player(BaseModel):
     id: int
     side: int
     websocket: WebSocket
-    command: Command
+    input: Input
 
 class GameSession:
     def __init__(self, game: Game):

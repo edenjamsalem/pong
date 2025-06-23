@@ -15,6 +15,8 @@ game_sessions = {}
 #         data = ws.receive_json()
 
 # Endpoints
+# need to do proper input validation for API endpoints !
+
 @app.post("/games")
 def create_game():
     game_id = str(uuid4())
@@ -32,10 +34,10 @@ def get_game_state(game_id: str):
     return game_sessions[game_id].get_state()
 
 @app.put("/games/{game_id}/input")
-def put_user_input(game_id:str, player: Player):
+def put_user_input(game_id: str, player: Player):
     if game_id not in game_sessions:
         raise HTTPException(status_code=404, detail="Item not found")
-    game_sessions[game_id].enqueue(player.command)
+    game_sessions[game_id].enqueue(player.input)
     return {"status": "input queued"}
 
 

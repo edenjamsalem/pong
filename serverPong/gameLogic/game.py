@@ -3,7 +3,7 @@ from sprites import *
 from utils import Clock
 from queue import SimpleQueue
 from abc import ABC, abstractmethod
-from ..server.gameSession import Command
+from ..server.gameSession import Input
 
 class Game(ABC):
     def __init__(self, id, broadcast_callback):
@@ -28,20 +28,22 @@ class Game(ABC):
     def _process_queue(self, dt):
         # need to add input validation
         while not self.queue.empty():
-            command = self.queue.get_nowait()
-            if command.type == 'movement':
-                self.players[command.side].update(dt, command.dy)
-            elif command.type == 'quit':
-                # need to handle properly
+            input = self.queue.get_nowait()
+            if input.type == 'movement':
+                self.players[input.side].move(dt, input.dy)
+            elif input.type == 'quit':
+                # need to handle this properly
+                print(f"Player '{input.side}' has quit the game!")
                 self.running = False
+                break
     
     @abstractmethod
     def _update_state(self, dt):
         pass
 
     # public methods
-    def enqueue(self, command: Command):
-        self.queue.put(command)
+    def enqueue(self, input: Input):
+        self.queue.put(input)
 
     def get_state(self):
         return {
@@ -61,8 +63,10 @@ class SinglePlayer(Game):
         self.players = (Player(side = LEFT_PADDLE), AIBot(side = RIGHT_PADDLE))
     
     def _update_state(self, dt):
+        self.players[LEFT_PADDLE]._cache_rect()
+        self.players[RIGHT_PADDLE]._cache_rect()
         self._process_queue(dt)
-        self.players[RIGHT_PADDLE].update(dt)
+        self.players[RIGHT_PADDLE].update(dt) # assuming the bot doesn't use the queue
         self.ball.update(dt)
 
 # the current implementation should work for both local and remote players
@@ -71,8 +75,11 @@ class TwoPlayer(Game):
         self.players = (Player(side = LEFT_PADDLE), Player(side = RIGHT_PADDLE))
     
     def _update_state(self, dt):
+        self.players[LEFT_PADDLE]._cache_rect()
+        self.players[RIGHT_PADDLE]._cache_rect()
         self._process_queue(dt)
         self.ball.update(dt)
+
 
 class Tournament(Game):
     pass

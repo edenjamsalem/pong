@@ -3,8 +3,9 @@ from random import choice, uniform
 from utils import Rect
 import time
 import numpy as np
+from abc import ABC
 
-class Paddle():
+class Paddle(ABC):
     def __init__(self):
         self.rect = Rect(POS[LEFT_PADDLE][0], POS[LEFT_PADDLE][1], SIZE['paddle'][0], SIZE['paddle'][1])
         self.old_rect = self.rect.instance()
@@ -14,9 +15,8 @@ class Paddle():
         self.rect.top = 0 if self.rect.top < 0 else self.rect.top
         self.rect.bottom = WINDOW_HEIGHT if self.rect.bottom > WINDOW_HEIGHT else self.rect.bottom   
 
-    def update(self, dt, dy):
+    def _cache_rect(self):
         self.old_rect.copy(self.rect)
-        self.move(dt, dy)
 
 class Player(Paddle):
     def __init__(self, side):
@@ -26,6 +26,17 @@ class Player(Paddle):
         self.rect.y = POS[self.side][1]
         self.speed = SPEED['player']
         self.score = 0
+    
+
+class AIBot(Paddle):
+    def __init__(self, side):
+        super().__init__()
+        self.side = side
+        ... 
+    
+    def update(self, dt):
+        ...
+        pass
 
 class Ball():
     def __init__(self, paddle_sprites, update_score):
