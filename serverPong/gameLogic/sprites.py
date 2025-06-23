@@ -15,7 +15,7 @@ class Paddle(ABC):
         self.rect.top = 0 if self.rect.top < 0 else self.rect.top
         self.rect.bottom = WINDOW_HEIGHT if self.rect.bottom > WINDOW_HEIGHT else self.rect.bottom   
 
-    def _cache_rect(self):
+    def cache_rect(self):
         self.old_rect.copy(self.rect)
 
 class Player(Paddle):

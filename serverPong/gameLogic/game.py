@@ -63,8 +63,8 @@ class SinglePlayer(Game):
         self.players = (Player(side = LEFT_PADDLE), AIBot(side = RIGHT_PADDLE))
     
     def _update_state(self, dt):
-        self.players[LEFT_PADDLE]._cache_rect()
-        self.players[RIGHT_PADDLE]._cache_rect()
+        self.players[LEFT_PADDLE].cache_rect()
+        self.players[RIGHT_PADDLE].cache_rect()
         self._process_queue(dt)
         self.players[RIGHT_PADDLE].update(dt) # assuming the bot doesn't use the queue
         self.ball.update(dt)
@@ -75,8 +75,8 @@ class TwoPlayer(Game):
         self.players = (Player(side = LEFT_PADDLE), Player(side = RIGHT_PADDLE))
     
     def _update_state(self, dt):
-        self.players[LEFT_PADDLE]._cache_rect()
-        self.players[RIGHT_PADDLE]._cache_rect()
+        self.players[LEFT_PADDLE].cache_rect()
+        self.players[RIGHT_PADDLE].cache_rect()
         self._process_queue(dt)
         self.ball.update(dt)
 
