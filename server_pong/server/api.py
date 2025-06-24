@@ -13,13 +13,13 @@ game_sessions = {}
 async def websocket_endpoint(ws: WebSocket, game_id: str):
     # handle initial connection
     if game_id not in game_sessions:
-        await ws.close(code=4004, reason="Game not found")
+        await ws.close(code=4004, reason="Game not found.")
         return
     
     await ws.accept()
     game_session = game_sessions[game_id]
     if game_session.full:
-        await ws.close(code=4004, reason="Game not found")
+        await ws.close(code=4004, reason="Game already full.")
         return
 
     client = Client(id=str(uuid4()), websocket=ws)

@@ -1,6 +1,7 @@
 from ..settings import *
 from fastapi import WebSocket
 from ..game_logic.game import SinglePlayer, TwoPlayer, Tournament
+import asyncio
 
 class Client:
     def __init__(self, id, websocket):
@@ -30,10 +31,20 @@ class GameSession:
             self.running = False
             self.stop()
 
+    async def _assign_sides(self): # need to think how this will work for the tournament
+        if self.mode == 'two_player_remote':
+            for i, client in enumerate(self.clients[:2]):
+                client.side = i
+                self.game.players[i].side = i
+                await client.websocket.send_json({"side": i})
+        elif self.mode == 'tournament':
+            pass
+
     async def start(self):
+        await self._assign_sides()
         if not self.running:
             self.running = True
-            await self.game.run()
+            asyncio.create_task(self.game.run())
     
     def stop(self):
         self.running = False
