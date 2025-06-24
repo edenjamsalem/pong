@@ -22,6 +22,8 @@ from msg_data import data_adaptor
 api = FastAPI()
 game_sessions = {}
 
+#TODO: need to decouple client and client_id creation from websocket creation so that their identity persists if they refresh the page or lose connection temporarily
+
 # Websocket endpoints
 
 @api.websocket("/ws/{game_mode}/{game_id}")
@@ -65,8 +67,7 @@ async def websocket_endpoint(ws: WebSocket, game_id: str):
 @api.post("/games/{game_mode}")
 def create_game(game_mode: str):
     game_id = str(uuid4())
-    game_session = GameSession(game_mode, game_id)
-    game_sessions[game_id] = game_session
+    game_sessions[game_id] = GameSession(game_mode, game_id)
     return {"game_id": game_id}
 
 
