@@ -1,4 +1,4 @@
-from serverPong.utils import Clock
+from ..game_logic.utils import Clock
 from queue import SimpleQueue
 
 class Client():

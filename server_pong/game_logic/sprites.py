@@ -1,6 +1,6 @@
-from settings import * 
+from server_pong.settings import * 
 from random import choice, uniform
-from serverPong.utils import Rect
+from utils import Rect
 import time
 import numpy as np
 from abc import ABC
@@ -27,7 +27,6 @@ class Player(Paddle):
         self.speed = SPEED['player']
         self.score = 0
     
-
 class AIBot(Paddle):
     def __init__(self, side):
         super().__init__()

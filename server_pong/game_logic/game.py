@@ -1,9 +1,9 @@
-from settings import * 
+from server_pong.settings import * 
 from sprites import * 
-from serverPong.utils import Clock
+from utils import Clock
 from queue import SimpleQueue
 from abc import ABC, abstractmethod
-from ..server.gameSession import Input
+from ..server.game_session import Input
 
 class Game(ABC):
     def __init__(self, id, broadcast_callback):
@@ -36,10 +36,16 @@ class Game(ABC):
                 print(f"Player '{input.side}' has quit the game!")
                 self.running = False
                 break
-    
+
     @abstractmethod
-    def _update_state(self, dt):
+    def _handle_input(self, dt):
         pass
+
+    def _update_state(self, dt):
+        self.players[LEFT_PADDLE].cache_rect()
+        self.players[RIGHT_PADDLE].cache_rect()
+        self._handle_input(dt)
+        self.ball.update(dt)
 
     # public methods
     def enqueue(self, input: Input):
@@ -61,24 +67,19 @@ class Game(ABC):
 class SinglePlayer(Game):
     def _init_players(self):
         self.players = (Player(side = LEFT_PADDLE), AIBot(side = RIGHT_PADDLE))
-    
-    def _update_state(self, dt):
-        self.players[LEFT_PADDLE].cache_rect()
-        self.players[RIGHT_PADDLE].cache_rect()
-        self._process_queue(dt)
+
+    def _handle_input(self, dt):
+        self._process_queue(dt) # handles player movement & quitting
         self.players[RIGHT_PADDLE].update(dt) # assuming the bot doesn't use the queue
-        self.ball.update(dt)
+
 
 # the current implementation should work for both local and remote players
 class TwoPlayer(Game):
     def _init_players(self):
         self.players = (Player(side = LEFT_PADDLE), Player(side = RIGHT_PADDLE))
-    
-    def _update_state(self, dt):
-        self.players[LEFT_PADDLE].cache_rect()
-        self.players[RIGHT_PADDLE].cache_rect()
+
+    def _handle_input(self, dt):
         self._process_queue(dt)
-        self.ball.update(dt)
 
 class Tournament(Game):
     pass

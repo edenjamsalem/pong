@@ -1,17 +1,5 @@
-from ..gameLogic.game import Game
-from fastapi import WebSocket
-from pydantic import BaseModel
-
-class Input(BaseModel):
-    type: str
-    side: int
-    dy: float
-
-class Player(BaseModel):
-    id: int
-    side: int
-    websocket: WebSocket
-    input: Input
+from ..game_logic.game import Game
+from player import Player
 
 class GameSession:
     def __init__(self, game: Game):

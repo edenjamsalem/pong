@@ -1,23 +1,33 @@
-from fastapi import FastAPI, HTTPException
+from server_pong.settings import *
+from fastapi import FastAPI, HTTPException, WebSocket
 from uuid import uuid4
 from threading import Thread
-from ..gameLogic.game import Game
-from gameSession import GameSession, Player
+from ..game_logic.game import Game
+from game_session import GameSession, Player
+import asyncio
 
-app = FastAPI()
+api = FastAPI()
 game_sessions = {}
 
-# @app.websocket("ws")
-# async def websocket_endpoint(ws: WebSocket):
-#     await ws.accept()
+# Websocket endpoints
+@api.websocket("ws")
+async def websocket_endpoint(ws: WebSocket, game_id: str):
+    await ws.accept()
+    game = Game(game_id)
+    player = Player(id=0, side=LEFT_PADDLE, websocket=ws)
+    game.add_player(player)
 
-#     while True:
-#         data = ws.receive_json()
+    try:
+        while (True):
+            data = await ws.receive_json()
+            game.enqueue(data)
 
-# Endpoints
-# need to do proper input validation for API endpoints !
+    except:
 
-@app.post("/games")
+    
+
+# HTTP endpoints (NOT FAST ENOUGH FOR USER INPUT)
+@api.post("/games")
 def create_game():
     game_id = str(uuid4())
     game = Game(game_id)
@@ -27,13 +37,13 @@ def create_game():
     thread.start()
     return {"game_id": game_id}
 
-@app.get("/games/{game_id}/state")
+@api.get("/games/{game_id}/state")
 def get_game_state(game_id: str):
     if game_id not in game_sessions:
         raise HTTPException(status_code=404, detail="Item not found")
     return game_sessions[game_id].get_state()
 
-@app.put("/games/{game_id}/input")
+@api.put("/games/{game_id}/input")
 def put_user_input(game_id: str, player: Player):
     if game_id not in game_sessions:
         raise HTTPException(status_code=404, detail="Item not found")
