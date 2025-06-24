@@ -26,7 +26,7 @@ class Player(Paddle):
         self.rect.y = POS[self.side][1]
         self.speed = SPEED['player']
         self.score = 0
-    
+
 class AIBot(Paddle):
     def __init__(self, side):
         super().__init__()

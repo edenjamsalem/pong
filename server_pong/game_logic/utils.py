@@ -1,10 +1,11 @@
 import time
+import asyncio
 
 class Clock:
     def __init__(self):
         self.last_time = time.time()
 
-    def tick(self, fps = 0):
+    async def tick(self, fps = 0):
         current_time = time.time()
         delta = current_time - self.last_time
         self.last_time = current_time
@@ -12,7 +13,7 @@ class Clock:
 		# account for sleep time
         if fps > 0:
             sleep_time = max(0, (1.0 / fps) - delta)
-            time.sleep(sleep_time)
+            await asyncio.sleep(sleep_time)
             delta += sleep_time
 
         return delta * 1000
