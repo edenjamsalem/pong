@@ -8,7 +8,7 @@ import asyncio
 class Game(ABC):
     def __init__(self, id, broadcast_callback):
         self.id = id    # see if I actually need this later
-        self._broadcast_callback = broadcast_callback
+        self._broadcast = broadcast_callback
         self.clock = Clock()
         self.queue = asyncio.Queue()
         self.running = True
@@ -42,8 +42,8 @@ class Game(ABC):
         self.ball.update(dt)
 
     # public methods
-    async def enqueue(self, input: PaddleMovement):
-        await self.queue.put(input)
+    def enqueue(self, input: PaddleMovement):
+        self.queue.put(input)
 
     def get_state(self):
         return {
@@ -57,7 +57,7 @@ class Game(ABC):
             dt = await self.clock.tick(60) / 1000
             self._update_state(dt)
             state = self.get_state()
-            await self._broadcast_callback(state)
+            await self._broadcast(state)
 
 class SinglePlayer(Game):
     def _init_players(self):

@@ -48,9 +48,9 @@ async def websocket_endpoint(ws: WebSocket, game_id: str):
     try:
         while (True):
             json_data = await ws.receive_json()
-            client_data = data_adaptor.validate_python(json_data) # converts the json to a pydantic BaseModel and performs type checking
+            client_data = data_adaptor.validate_python(json_data) # converts json to pydantic BaseModel for automatic type checking
             if client_data.type == 'movement':
-                await game_session.game.enqueue(client_data)
+                game_session.game.enqueue(client_data)
             elif client_data.type == 'quit':
                 # handle quit properly
                 pass
@@ -59,7 +59,9 @@ async def websocket_endpoint(ws: WebSocket, game_id: str):
         game_session.remove_client(client)
         # need to handle this more thoroughly
 
-# HTTP endpoints (not fast enough to handle real-time communication)
+
+# HTTP endpoints
+
 @api.post("/games/{game_mode}")
 def create_game(game_mode: str):
     game_id = str(uuid4())
@@ -67,16 +69,4 @@ def create_game(game_mode: str):
     game_sessions[game_id] = game_session
     return {"game_id": game_id}
 
-# @api.get("/games/{game_id}/state")
-# def get_game_state(game_id: str):
-#     if game_id not in game_sessions:
-#         raise HTTPException(status_code=404, detail="Item not found")
-#     return game_sessions[game_id].get_state()
-
-# @api.put("/games/{game_id}/input")
-# def put_user_input(game_id: str, player: Player):
-#     if game_id not in game_sessions:
-#         raise HTTPException(status_code=404, detail="Item not found")
-#     game_sessions[game_id].enqueue(player.input)
-#     return {"status": "input queued"}
 
