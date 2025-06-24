@@ -1,4 +1,3 @@
-from ..settings import *
 from fastapi import WebSocket
 from ..game_logic.game import SinglePlayer, TwoPlayer, Tournament
 import asyncio

@@ -1,4 +1,4 @@
-from server_pong.settings import * 
+from settings import * 
 from sprites import * 
 from utils import Clock
 from abc import ABC, abstractmethod

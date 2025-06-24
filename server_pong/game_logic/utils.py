@@ -1,5 +1,5 @@
-import time
 import asyncio
+import time
 
 class Clock:
     def __init__(self):
@@ -16,7 +16,7 @@ class Clock:
             await asyncio.sleep(sleep_time)
             delta += sleep_time
 
-        return delta * 1000
+        return delta
 
 class Rect:
 	def __init__(self, x: float, y: float, w: float, h: float):

@@ -1,4 +1,4 @@
-from server_pong.settings import * 
+from settings import * 
 from random import choice, uniform
 from utils import Rect
 import time
@@ -49,7 +49,7 @@ class Ball():
         self.speed_modifier = 0
     
         # timer 
-        self.start_time = time.time() * 1000
+        self.start_time = time.time()
 
     def move(self, dt):
         self.rect.x += self.direction[0] * SPEED['ball'] * dt * self.speed_modifier
@@ -92,10 +92,10 @@ class Ball():
         self.rect.x = WINDOW_WIDTH / 2
         self.rect.y = WINDOW_HEIGHT / 2
         self.direction = np.array([choice((1,-1)), uniform(0.7, 0.8) * choice((-1,1))])
-        self.start_time = time.time() * 1000
+        self.start_time = time.time()
 
     def delay_timer(self):
-        if (time.time() * 1000) - self.start_time >= START_DELAY:
+        if (time.time()) - self.start_time >= START_DELAY:
             self.speed_modifier = 1
         else:
             self.speed_modifier = 0

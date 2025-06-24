@@ -17,7 +17,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
 from game_session import GameSession, Client
-from server_pong.server.data import data_adaptor
+from msg_data import data_adaptor
 
 api = FastAPI()
 game_sessions = {}
