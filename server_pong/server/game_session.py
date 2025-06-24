@@ -9,12 +9,24 @@ class Client:
         self.websocket: WebSocket = websocket
 
 class GameSession:
-    def __init__(self,mode: str):
+    def __init__(self, mode: str, game_id: str):
         self.mode = mode
-        self.game = None
+        self.id = game_id
         self.clients: list[Client] = []
         self.full: bool = False
         self.running = False
+        self._create_game()
+
+    def _create_game(self):
+        if self.mode == 'single_player': 
+            self.game = SinglePlayer(self.id, self.broadcast_callback)
+        elif self.mode == "two_player_local" or self.mode == "two_player_remote":
+            self.game = TwoPlayer(self.id, self.broadcast_callback)
+        elif self.mode == "tournament":
+            self.game = Tournament(self.id, self.broadcast_callback)
+        else:
+            raise ValueError(f"Invalid game mode: {self.mode}")
+            # maybe destroy here?
 
     def add_client(self, client: Client):
         if not self.full:
@@ -23,6 +35,7 @@ class GameSession:
                 self.full = True
             elif self.mode == 'two_player_remote' and len(self.clients) == 2:
                 self.full = True
+            # need to add tournament 
 
     def remove_client(self, client: Client):
         if client in self.clients:
@@ -30,15 +43,6 @@ class GameSession:
         if len(self.clients) == 0:
             self.running = False
             self.stop()
-
-    async def _assign_sides(self): # need to think how this will work for the tournament
-        if self.mode == 'two_player_remote':
-            for i, client in enumerate(self.clients[:2]):
-                client.side = i
-                self.game.players[i].side = i
-                await client.websocket.send_json({"side": i})
-        elif self.mode == 'tournament':
-            pass
 
     async def start(self):
         await self._assign_sides()
@@ -51,6 +55,15 @@ class GameSession:
         if self.game:
             self.game.running = False
     
+    async def _assign_sides(self):
+        if self.mode == 'two_player_remote':
+            for i, client in enumerate(self.clients[:2]):
+                client.side = i
+                self.game.players[i].side = i
+                await client.websocket.send_json({"side": i})
+        elif self.mode == 'tournament':  # need to think how this will work for the tournament
+            pass
+    
     async def broadcast_callback(self, state):
         disconnected_clients = []
         for client in self.clients:
@@ -61,17 +74,3 @@ class GameSession:
         for client in disconnected_clients:
             self.remove_client(client)
 
-def create_game_session(game_mode: str, game_id: str):
-    game_session = GameSession(game_mode)
-
-    if game_mode == 'single_player': 
-        game = SinglePlayer(game_id, game_session.broadcast_callback)
-    elif game_mode == "two_player_local" or game_mode == "two_player_remote":
-        game = TwoPlayer(game_id, game_session.broadcast_callback)
-    elif game_mode == "tournament":
-        game = Tournament(game_id, game_session.broadcast_callback)
-    else:
-        raise ValueError(f"Invalid game mode '{game_mode}'")
-    
-    game_session.game = game
-    return game_session

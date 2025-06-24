@@ -1,6 +1,22 @@
+'''
+    -   This page creates the API and its endpoints using FastAPI
+
+    -   FastAPI is designed to work with python's "async" feature rather than using threads
+
+    -   HTTP requests are slow and are only used to make the inititial request to 
+        create a new game
+
+    -   After that, a websocket is established for real-time connection with the client
+
+    -   One websocket is used for a single client and handles all subsequent API requests
+
+    -   A client is a single device not a single player, there can be two players on a single
+        keyboard, sending requests via the same websocket to the same game session
+'''
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
-from game_session import create_game_session, Client
+from game_session import GameSession, Client
 from server_pong.server.data import data_adaptor
 
 api = FastAPI()
@@ -8,10 +24,9 @@ game_sessions = {}
 
 # Websocket endpoints
 
-# handles clients connecting to a specific game_session using its game_id
 @api.websocket("/ws/{game_mode}/{game_id}")
-async def websocket_endpoint(ws: WebSocket, game_id: str):
-    # handle initial connection
+async def websocket_endpoint(ws: WebSocket, game_id: str):  
+    # initial connection
     if game_id not in game_sessions:
         await ws.close(code=4004, reason="Game not found.")
         return
@@ -29,25 +44,26 @@ async def websocket_endpoint(ws: WebSocket, game_id: str):
     if game_session.full and not game_session.running:
         await game_session.start()
     
-    # handle gameplay
+    # gameplay requests
     try:
         while (True):
             json_data = await ws.receive_json()
-            client_data = data_adaptor.validate_python(json_data)
+            client_data = data_adaptor.validate_python(json_data) # converts the json to a pydantic BaseModel and performs type checking
             if client_data.type == 'movement':
                 await game_session.game.enqueue(client_data)
             elif client_data.type == 'quit':
-                # handle quit
+                # handle quit properly
                 pass
 
     except WebSocketDisconnect:
         game_session.remove_client(client)
+        # need to handle this more thoroughly
 
 # HTTP endpoints (not fast enough to handle real-time communication)
 @api.post("/games/{game_mode}")
 def create_game(game_mode: str):
     game_id = str(uuid4())
-    game_session = create_game_session(game_mode, game_id)
+    game_session = GameSession(game_mode, game_id)
     game_sessions[game_id] = game_session
     return {"game_id": game_id}
 
