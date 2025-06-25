@@ -29,26 +29,21 @@ clients = {}    # only temporay, we will use a db to store this
 
 # Websocket endpoints
 
-# creates a new websocket, adds it to the client and adds the client to the game session
-# specified by the game_id, if the game is now full it will start automatically
-@api.websocket("/ws/{game_mode}/{game_id}")
-async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):  
-    # initial connection
-
+async def validate_connection(ws: WebSocket, client_id: str, game_id: str):
     if client_id not in clients:
         await ws.close(code=4004, reason="Client not recognised.")
-        return
+        return None, None
     if game_id not in game_sessions:
         await ws.close(code=4004, reason="Game not found.")
-        return
+        return None, None
     
-    await ws.accept()
-    game_session = game_sessions[game_id]
+    return clients[client_id], game_sessions[game_id]
+
+async def join_game_session(ws, client, game_session):
     if game_session.full:
         await ws.close(code=4004, reason="Game already full.")
-        return
+        return 
 
-    client = clients[client_id]
     client.websocket = ws
     game_session.add_client(client)
 
@@ -56,24 +51,39 @@ async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):
         await ws.send_json({"message": "Waiting for more players"})
     elif not game_session.running:
         await game_session.start()
+
+async def handle_client_messages(ws, game_session):
+    while (True):
+        json_data = await ws.receive_json()
+        try:
+            # converts json to pydantic BaseModel for automatic type checking
+            client_data = data_adaptor.validate_python(json_data) 
+        except ValidationError as e:
+            await ws.send_json({"error": "Invalid data format", "detail": e.errors()})
+            continue 
+
+        if client_data.type == 'movement':
+            game_session.game.enqueue(client_data)
+        elif client_data.type == 'quit':
+            # handle quit properly
+            pass
+
+# creates a new websocket, adds it to the client and adds the client to the game session
+# specified by the game_id, if the game is now full it will start automatically
+@api.websocket("/ws/{game_mode}/{game_id}")
+async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):  
+
+    # initial connection
+    client, game_session = await validate_connection(ws, client_id, game_id)
+    if not client or not game_session:
+        return
     
+    await ws.accept()
+    await join_game_session(ws, client, game_session)
+
     # gameplay requests
     try:
-        while (True):
-            json_data = await ws.receive_json()
-            try:
-                # converts json to pydantic BaseModel for automatic type checking
-                client_data = data_adaptor.validate_python(json_data) 
-            except ValidationError as e:
-                await ws.send_json({"error": "Invalid data format", "detail": e.errors()})
-                continue 
-
-            if client_data.type == 'movement':
-                game_session.game.enqueue(client_data)
-            elif client_data.type == 'quit':
-                # handle quit properly
-                pass
-
+        await handle_client_messages(ws, game_session)
     except WebSocketDisconnect:
         game_session.remove_client(client)
         # need to handle this more thoroughly
