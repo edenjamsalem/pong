@@ -15,6 +15,7 @@
 '''
 
 # TODO: need to create a standardised JSON structure that we stick to for client-server communication
+# TODO: IF the API keeps growing maybe refactor into a class to share data more easily
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
@@ -68,8 +69,6 @@ async def handle_client_messages(ws, game_session):
             # handle quit properly
             pass
 
-# creates a new websocket, adds it to the client and adds the client to the game session
-# specified by the game_id, if the game is now full it will start automatically
 @api.websocket("/ws/{game_mode}/{game_id}")
 async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):  
 
@@ -96,7 +95,7 @@ async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):
 def create_game(client_id: str, game_mode: str):
     if client_id not in clients:
         # placeholder for real return value
-        return {"error": "cleint_id not found"}
+        return {"error": "client id not found"}
     
     id = str(uuid4())
     game_sessions[id] = GameSession(game_mode, id)
@@ -110,4 +109,3 @@ def create_client(username, password):
     # need to perform some sort of check with a db here
     clients[id] = Client(id, username, password)
     return {'client_id': id}
-
