@@ -3,7 +3,7 @@ from pydantic import BaseModel, Literal, Union, TypeAdapter
 class PaddleMovement(BaseModel):
     client_id: str
     type: Literal['movement']
-    side: int
+    side: Literal[0, 1]
     dy: float
 
 class QuitGame(BaseModel):
