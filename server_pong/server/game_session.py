@@ -1,11 +1,6 @@
-from fastapi import WebSocket
 from ..game_logic.game import SinglePlayer, TwoPlayer, Tournament
+from client import Client
 import asyncio
-
-class Client:
-    def __init__(self, id, websocket):
-        self.id: str = id
-        self.websocket: WebSocket = websocket
 
 class GameSession:
     def __init__(self, mode: str, game_id: str):

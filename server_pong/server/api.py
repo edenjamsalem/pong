@@ -16,19 +16,23 @@
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
-from game_session import GameSession, Client
+from game_session import GameSession
+from client import Client
 from msg_data import data_adaptor
 
 api = FastAPI()
 game_sessions = {}
-
-#TODO: need to decouple client and client_id creation from websocket creation so that their identity persists if they refresh the page or lose connection temporarily
+clients = {}    # only temporay, we will use a db to store this
 
 # Websocket endpoints
 
 @api.websocket("/ws/{game_mode}/{game_id}")
-async def websocket_endpoint(ws: WebSocket, game_id: str):  
+async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):  
     # initial connection
+
+    if client_id not in clients:
+        await ws.close(code=4004, reason="Client not recognised.")
+        return
     if game_id not in game_sessions:
         await ws.close(code=4004, reason="Game not found.")
         return
@@ -39,8 +43,8 @@ async def websocket_endpoint(ws: WebSocket, game_id: str):
         await ws.close(code=4004, reason="Game already full.")
         return
 
-    client = Client(id=str(uuid4()), websocket=ws)
-    await ws.send_json({"client_id": client.id})
+    client = clients[client_id]
+    client.websocket = ws
     game_session.add_client(client)
 
     if game_session.full and not game_session.running:
@@ -64,10 +68,23 @@ async def websocket_endpoint(ws: WebSocket, game_id: str):
 
 # HTTP endpoints
 
+# creates a new game_session
 @api.post("/games/{game_mode}")
-def create_game(game_mode: str):
-    game_id = str(uuid4())
-    game_sessions[game_id] = GameSession(game_mode, game_id)
-    return {"game_id": game_id}
+def create_game(client_id: str, game_mode: str):
+    if client_id not in clients:
+        # placeholder for real return value
+        return {"error": "cleint_id not found"}
+    
+    id = str(uuid4())
+    game_sessions[id] = GameSession(game_mode, id)
+    return {"game_id": id}
+    
 
+# creates a new client and returns their id
+@api.post("/games/client")
+def create_client(username, password):
+    id = str(uuid4())
+    # need to perform some sort of check with a db here
+    clients[id] = Client(id, username, password)
+    return {'client_id': id}
 
