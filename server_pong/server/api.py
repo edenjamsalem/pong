@@ -98,8 +98,11 @@ def create_game(client_id: str, game_mode: str):
         return {"error": "client id not found"}
     
     id = str(uuid4())
-    game_sessions[id] = GameSession(game_mode, id)
-    return {"game_id": id}
+    try:
+        game_sessions[id] = GameSession(game_mode, id)
+        return {"game_id": id}
+    except ValueError:
+        return ({"error": "Invalid game mode: {game_mode}"})
     
 
 # creates a new client and returns their id
