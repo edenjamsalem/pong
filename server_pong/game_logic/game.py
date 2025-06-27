@@ -36,8 +36,8 @@ class Game(ABC):
         pass
 
     def _update_state(self, dt):
-        self.players[LEFT_PADDLE].cache_rect()
-        self.players[RIGHT_PADDLE].cache_rect()
+        self.players["left"].cache_rect()
+        self.players["right"].cache_rect()
         self._handle_input(dt)
         self.ball.update(dt)
 
@@ -47,8 +47,8 @@ class Game(ABC):
 
     def get_state(self):
         return {
-            "paddle_left": {'y': self.players[0].rect.y, 'score': self.players[0].score,},
-            "paddle_right": {'y': self.players[1].rect.y, 'score': self.players[1].score,},
+            "paddle_left": {'y': self.players["left"].rect.y, 'score': self.players["left"].score,},
+            "paddle_right": {'y': self.players["right"].rect.y, 'score': self.players["right"].score,},
             "ball": {'x': self.ball.rect.x, 'y': self.ball.rect.y},
         }
 
@@ -61,16 +61,16 @@ class Game(ABC):
 
 class SinglePlayer(Game):
     def _init_players(self):
-        self.players = (Player(side = LEFT_PADDLE), AIBot(side = RIGHT_PADDLE))
+        self.players = {"left": Player(POS['left']), "right": AIBot(POS['right'])}
 
     def _handle_input(self, dt):
         self._process_queue(dt) # handles player movement
-        self.players[RIGHT_PADDLE].update(dt) # assuming the bot doesn't use the queue
+        self.players["right"].update(dt) # assuming the bot doesn't use the queue
 
 # the current implementation should work for both local and remote players
 class TwoPlayer(Game):
     def _init_players(self):
-        self.players = (Player(side = LEFT_PADDLE), Player(side = RIGHT_PADDLE))
+        self.players = {"left": Player(POS['left']), "right": Player(POS['right'])}
 
     def _handle_input(self, dt):
         self._process_queue(dt)

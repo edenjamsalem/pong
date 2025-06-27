@@ -7,7 +7,7 @@ from abc import ABC
 
 class Paddle(ABC):
     def __init__(self):
-        self.rect = Rect(POS[LEFT_PADDLE][0], POS[LEFT_PADDLE][1], SIZE['paddle'][0], SIZE['paddle'][1])
+        self.rect = Rect(POS["left"][0], POS["left"][1], SIZE['paddle'][0], SIZE['paddle'][1])
         self.old_rect = self.rect.instance()
     
     def move(self, dt, dy):
@@ -19,18 +19,18 @@ class Paddle(ABC):
         self.old_rect.copy(self.rect)
 
 class Player(Paddle):
-    def __init__(self, side):
+    def __init__(self, pos):
         super().__init__()
-        self.side = side
-        self.rect.x = POS[self.side][0]
-        self.rect.y = POS[self.side][1]
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
         self.speed = SPEED['player']
         self.score = 0
 
 class AIBot(Paddle):
-    def __init__(self, side):
+    def __init__(self, pos):
         super().__init__()
-        self.side = side
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
         ... 
     
     def update(self, dt):
@@ -39,7 +39,7 @@ class AIBot(Paddle):
 
 class Ball():
     def __init__(self, players, update_score):
-        self.players = players
+        self.players: dict[str, Paddle] = players
         self.update_score = update_score
 
         # rect & movement
@@ -58,7 +58,7 @@ class Ball():
         self.collision('vertical')
     
     def collision(self, direction):
-        for paddle in self.players:
+        for paddle in self.players.values():
             if self.rect.colliderect(paddle.rect):
                 if direction == 'horizontal':
                     if self.rect.right >= paddle.rect.left and self.old_rect.right <= paddle.old_rect.left:
@@ -85,7 +85,7 @@ class Ball():
             self.direction[1] *= -1
         
         if self.rect.right >= WINDOW_WIDTH or self.rect.left <= 0:
-            self.update_score(RIGHT_PADDLE if self.rect.x < WINDOW_WIDTH / 2 else LEFT_PADDLE)
+            self.update_score("right" if self.rect.x < WINDOW_WIDTH / 2 else "left")
             self.reset()
         
     def reset(self):

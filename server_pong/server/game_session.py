@@ -50,11 +50,11 @@ class GameSession:
             self.game.running = False
     
     async def _assign_sides(self):
+        # for single or two player local sides can be assigned client side ??
         if self.mode == 'two_player_remote':
-            for i, client in enumerate(self.clients[:2]):
-                client.side = i
-                self.game.players[i].side = i
-                await client.websocket.send_json({"side": i})
+            await self.clients[0].websocket.send_json({"side": 'left'})
+            await self.clients[1].websocket.send_json({"side": 'right'})
+            
         elif self.mode == 'tournament':  # need to think how this will work for the tournament
             pass
     

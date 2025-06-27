@@ -1,5 +1,5 @@
 '''
-    -   This page creates the API and its endpoints using FastAPI
+    -   This page contains the API and its endpoints using FastAPI
 
     -   FastAPI is designed to work with python's "async" feature rather than using threads
 
