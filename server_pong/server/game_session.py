@@ -63,12 +63,9 @@ class GameSession:
             pass
     
     async def broadcast_callback(self, state):
-        disconnected_clients = []
-        for client in self.clients:
+        for client in reversed(self.clients): # loop backward to avoid indexing issues when rm clients
             try:
                 await client.websocket.send_json(state)
             except:
-                disconnected_clients.append(client)
-        for client in disconnected_clients:
-            self.remove_client(client)
+                self.remove_client(client)
 
