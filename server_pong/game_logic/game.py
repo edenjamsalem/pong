@@ -1,8 +1,8 @@
-from settings import * 
-from sprites import * 
-from utils import Clock
+from .settings import * 
+from .sprites import * 
+from .utils import Clock
 from abc import ABC, abstractmethod
-from ..server.game_session import PaddleMovement
+from server.msg_data import PaddleMovement
 import asyncio
 
 class Game(ABC):

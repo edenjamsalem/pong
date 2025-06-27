@@ -1,6 +1,6 @@
-from settings import * 
+from .settings import * 
+from .utils import Rect
 from random import choice, uniform
-from utils import Rect
 import time
 import numpy as np
 from abc import ABC

@@ -1,5 +1,5 @@
-from ..game_logic.game import SinglePlayer, TwoPlayer, Tournament
-from client import Client
+from game_logic.game import SinglePlayer, TwoPlayer, Tournament
+from .client import Client
 import asyncio
 
 class GameSession:
@@ -54,7 +54,7 @@ class GameSession:
         if self.mode == 'two_player_remote':
             await self.clients[0].websocket.send_json({"side": 'left'})
             await self.clients[1].websocket.send_json({"side": 'right'})
-            
+
         elif self.mode == 'tournament':  # need to think how this will work for the tournament
             pass
     

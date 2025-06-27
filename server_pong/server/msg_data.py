@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Literal, Union, TypeAdapter
+from pydantic import BaseModel, TypeAdapter
+from typing import Literal, Union
 
 class PaddleMovement(BaseModel):
     client_id: str

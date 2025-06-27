@@ -19,9 +19,9 @@
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
-from game_session import GameSession
-from client import Client
-from msg_data import data_adaptor
+from .game_session import GameSession
+from .client import Client
+from .msg_data import data_adaptor
 from pydantic import ValidationError
 
 api = FastAPI()
