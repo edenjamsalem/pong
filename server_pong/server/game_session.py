@@ -12,15 +12,19 @@ class GameSession:
         self._create_game()
 
     def _create_game(self):
-        if self.mode == 'single_player': 
-            self.game = SinglePlayer(self.id, self.broadcast_callback)
-        elif self.mode == "two_player_local" or self.mode == "two_player_remote":
-            self.game = TwoPlayer(self.id, self.broadcast_callback)
-        elif self.mode == "tournament":
-            self.game = Tournament(self.id, self.broadcast_callback)
-        else:
+        game_modes = {
+            'single_player': SinglePlayer,
+            'two_player_local': TwoPlayer,
+            'two_player_remote': TwoPlayer,
+            'tournament': Tournament
+        }
+
+        GameMode = game_modes.get(self.mode)
+        if not self.game:
             raise ValueError(f"Invalid game mode: {self.mode}")
             # maybe destroy here?
+        
+        self.game = GameMode(self.id, self.broadcast_callback)
 
     def add_client(self, client: Client):
         if not self.full:
