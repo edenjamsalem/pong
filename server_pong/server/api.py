@@ -15,7 +15,7 @@
 '''
 
 # TODO: need to create a standardised JSON structure that we stick to for client-server communication
-# TODO: IF the API keeps growing maybe refactor into a class to share data more easily
+# TODO: If the API keeps growing maybe refactor into a class to share data more easily
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
@@ -97,10 +97,10 @@ def create_game(client_id: str, game_mode: str):
         # placeholder for real return value
         return {"error": "client id not found"}
     
-    id = str(uuid4())
+    game_id = str(uuid4())
     try:
-        game_sessions[id] = GameSession(game_mode, id)
-        return {"game_id": id}
+        game_sessions[game_id] = GameSession(game_mode, game_id)
+        return {"game_id": game_id}
     except ValueError:
         return ({"error": "Invalid game mode: {game_mode}"})
     
