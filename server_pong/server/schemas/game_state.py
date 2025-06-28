@@ -2,22 +2,23 @@ from pydantic import BaseModel
 from typing import Literal
 
 # submodels
+
 class Ball(BaseModel):
-	'x' : float
-	'y' : float
+	x: float
+	y: float
 
 class Player(BaseModel):
-	'y' : float
-	'score' : int
+	y: float
+	score: int
 
 class GameState(BaseModel):
-	player_left : Player
-	player_right : Player
-	ball : Ball
+	player_left: Player
+	player_right: Player
+	ball: Ball
 
 
 # top-level model
-
+	
 class GameStateMessage(BaseModel):
-	type : Literal['state']
-	data : GameState
+	type: Literal['state']
+	data: GameState
