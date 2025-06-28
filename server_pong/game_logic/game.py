@@ -2,7 +2,7 @@ from .settings import *
 from .sprites import * 
 from .utils import Clock
 from abc import ABC, abstractmethod
-from server_pong.server.schemas import PaddleMovement
+from server.schemas.client_data import PaddleMovement
 import asyncio
 
 class Game(ABC):

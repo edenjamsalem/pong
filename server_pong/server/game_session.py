@@ -1,4 +1,4 @@
-from ..game_logic.game import SinglePlayer, TwoPlayer, Tournament
+from game_logic.game import SinglePlayer, TwoPlayer, Tournament
 from .client import Client
 import asyncio
 
