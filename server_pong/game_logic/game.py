@@ -7,7 +7,7 @@ import asyncio
 
 class Game(ABC):
     def __init__(self, id, broadcast_callback):
-        self.id = id    # see if I actually need this later
+        self.id = id    # see if actually needed later
         self._broadcast = broadcast_callback
         self.clock = Clock()
         self.queue = asyncio.Queue()

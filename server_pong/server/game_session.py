@@ -20,8 +20,8 @@ class GameSession:
         }
 
         GameMode = game_modes.get(self.mode)
-        if not self.game:
-            raise ValueError(f"Invalid game mode: {self.mode}")
+        if not GameMode:
+            raise ValueError(f"Invalid game mode: {GameMode}")
             # maybe destroy here?
         
         self.game = GameMode(self.id, self.broadcast_callback)
