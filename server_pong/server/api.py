@@ -14,11 +14,10 @@
     -   A client is a single device not a single player, there can be two players on a single
         keyboard, sending requests via the same websocket to the same game session
 
-        
     -   To run the server from the route directory: "uvicorn server.api:api --reload".
         (depending on your terminal and python version you may need to prefix with "python3 -m" or "python -m")
 
-    -   This starts the uvicorn server and tells it to execute the api object from the server.api file 
+    -   This starts the uvicorn server and tells it to execute the api object from the "server.api" file 
 '''
 
 # TODO: need to create a standardised JSON structure that we stick to for client-server communication
@@ -59,7 +58,7 @@ async def join_game_session(ws, client, game_session):
         await ws.send_json({
             'type': 'message', 
             'data' : 'Waiting for more players'
-            })
+        })
     elif not game_session.running:
         await game_session.start()
 
@@ -105,9 +104,8 @@ async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):
 
 # creates a new game_session and return game_id
 @api.post("/games/{game_mode}")
-def create_game(client_id: str, game_mode: str):
+async def create_game(client_id: str, game_mode: str):
     if client_id not in clients:
-        # placeholder for real return value
         return {
             'type': 'error',
             'data': 'client id not found'
@@ -117,23 +115,29 @@ def create_game(client_id: str, game_mode: str):
     try:
         game_sessions[game_id] = GameSession(game_mode, game_id)
         return {
-            'type': 'game',
+            'type': 'game_created',
             'data': {'game_id': game_id}
         }
     except ValueError:
         return {
             'type': 'error',
             'data': 'Invalid game mode: {game_mode}'
-            }
+        }
     
 
 # creates a new client and returns their id
 @api.post("/games/client")
-def create_client(username, password):
-    client_id = str(uuid4())
+async def create_client(username, password):
     # need to perform some sort of check with a db here
-    clients[client_id] = Client(client_id, username, password)
-    return {
-            'type': 'client',
+    client_id = str(uuid4())
+    try:
+        clients[client_id] = Client(id=client_id, username=username, password=password)
+        return {
+            'type': 'client_registered',
             'data': {'client_id': client_id}
+        }
+    except ValidationError:
+        return {
+            'type': 'error',
+            'data': 'Invalid data format'
         }
