@@ -1,4 +1,4 @@
-from game_logic.game import SinglePlayer, TwoPlayer, Tournament
+from ..game_logic.game import SinglePlayer, TwoPlayer, Tournament
 from .client import Client
 import asyncio
 
@@ -21,7 +21,7 @@ class GameSession:
 
         GameMode = game_modes.get(self.mode)
         if not GameMode:
-            raise ValueError(f'Invalid game mode: {GameMode}')
+            raise ValueError(f'Invalid game mode: {self.mode}')
             # maybe destroy here?
         
         self.game = GameMode(self.id, self.broadcast_callback)
@@ -69,6 +69,7 @@ class GameSession:
     
     async def broadcast_callback(self, state):
         for client in reversed(self.clients): # loop backward to avoid indexing issues when rm clients
+            
             try:
                 await client.websocket.send_json(state)
             except:

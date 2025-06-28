@@ -127,17 +127,11 @@ async def create_game(client_id: str, game_mode: str):
 
 # creates a new client and returns their id
 @api.post("/games/client")
-async def create_client(username, password):
+async def create_client(username: str, password: str):
     # need to perform some sort of check with a db here
     client_id = str(uuid4())
-    try:
-        clients[client_id] = Client(id=client_id, username=username, password=password)
-        return {
-            'type': 'client_registered',
-            'data': {'client_id': client_id}
-        }
-    except ValidationError:
-        return {
-            'type': 'error',
-            'data': 'Invalid data format'
-        }
+    clients[client_id] = Client(client_id, username, password)
+    return {
+        'type': 'client_registered',
+        'data': {'client_id': client_id}
+    }

@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Literal
 
+# FOR DOCUMENTATION ONLY
+
 # submodels
 
 class Ball(BaseModel):

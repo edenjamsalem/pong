@@ -50,8 +50,8 @@ class Game(ABC):
         return {
             'type' : 'state',
             'data' : {
-                'paddle_left': {'y': self.players['left'].rect.y, 'score': self.players['left'].score,},
-                'paddle_right': {'y': self.players['right'].rect.y, 'score': self.players['right'].score,},
+                'player_left': {'y': self.players['left'].rect.y, 'score': self.players['left'].score,},
+                'player_right': {'y': self.players['right'].rect.y, 'score': self.players['right'].score,},
                 'ball': {'x': self.ball.rect.x, 'y': self.ball.rect.y},
             }
         }
