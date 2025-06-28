@@ -93,6 +93,9 @@ class Ball():
         self.rect.y = WINDOW_HEIGHT / 2
         self.direction = np.array([choice((1,-1)), uniform(0.7, 0.8) * choice((-1,1))])
         self.start_time = time.time()
+    
+    # def cache_rect(self):
+    #     self.old_rect.copy(self.rect)
 
     def delay_timer(self):
         if (time.time()) - self.start_time >= START_DELAY:

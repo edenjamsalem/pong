@@ -1,7 +1,8 @@
 '''
     -   This page contains the API and its endpoints using FastAPI
 
-    -   FastAPI is designed to work with python's "async" feature rather than using threads
+    -   FastAPI is designed to work with python's "async" feature rather than using threads:
+            https://docs.python.org/3/library/asyncio.html
 
     -   HTTP requests are slow and are only used to make the inititial request to 
         create a new game and to reigister a client

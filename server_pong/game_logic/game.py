@@ -38,6 +38,7 @@ class Game(ABC):
     def _update_state(self, dt):
         self.players["left"].cache_rect()
         self.players["right"].cache_rect()
+        # self.ball.cache_rect()
         self._handle_input(dt)
         self.ball.update(dt)
 
@@ -51,13 +52,22 @@ class Game(ABC):
             "paddle_right": {'y': self.players["right"].rect.y, 'score': self.players["right"].score,},
             "ball": {'x': self.ball.rect.x, 'y': self.ball.rect.y},
         }
+    
+    def _state_changed(self):
+        return (
+            self.players['left'].rect.y != self.players['left'].old_rect.y or
+            self.players['right'].rect.y != self.players['right'].old_rect.y or
+            self.ball.rect.x != self.ball.old_rect.x or
+            self.ball.rect.y != self.ball.old_rect.y
+        )
 
     async def run(self):
         while self.running:
             dt = await self.clock.tick(60) / 1000
             self._update_state(dt)
             state = self.get_state()
-            await self._broadcast(state)
+            if (self._state_changed()):
+                await self._broadcast(state)
 
 class SinglePlayer(Game):
     def _init_players(self):
@@ -65,7 +75,7 @@ class SinglePlayer(Game):
 
     def _handle_input(self, dt):
         self._process_queue(dt) # handles player movement
-        self.players["right"].update(dt) # assuming the bot doesn't use the queue
+        self.players['right'].update(dt) # assuming the bot doesn't use the queue
 
 # the current implementation should work for both local and remote players
 class TwoPlayer(Game):
