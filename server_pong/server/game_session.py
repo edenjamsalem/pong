@@ -39,7 +39,6 @@ class GameSession:
         if client in self.clients:
             self.clients.remove(client)
         if len(self.clients) == 0:
-            self.running = False
             self.stop()
 
     async def start(self):
