@@ -38,7 +38,7 @@ class Game(ABC):
     def _update_state(self, dt):
         self.players["left"].cache_rect()
         self.players["right"].cache_rect()
-        # self.ball.cache_rect()
+        self.ball.cache_rect()
         self._handle_input(dt)
         self.ball.update(dt)
 

@@ -94,8 +94,8 @@ class Ball():
         self.direction = np.array([choice((1,-1)), uniform(0.7, 0.8) * choice((-1,1))])
         self.start_time = time.time()
     
-    # def cache_rect(self):
-    #     self.old_rect.copy(self.rect)
+    def cache_rect(self):
+        self.old_rect.copy(self.rect)
 
     def delay_timer(self):
         if (time.time()) - self.start_time >= START_DELAY:
@@ -104,7 +104,6 @@ class Ball():
             self.speed_modifier = 0
 
     def update(self, dt):
-        self.old_rect.copy(self.rect)
         self.delay_timer()
         self.move(dt)
         self.wall_collision()
