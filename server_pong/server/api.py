@@ -13,6 +13,12 @@
 
     -   A client is a single device not a single player, there can be two players on a single
         keyboard, sending requests via the same websocket to the same game session
+
+        
+    -   To run the server from the route directory: "uvicorn server.api:api --reload".
+        (depending on your terminal and python version you may need to prefix with "python3 -m" or "python -m")
+
+    -   This starts the uvicorn server and tells it to execute the api object from the server.api file 
 '''
 
 # TODO: need to create a standardised JSON structure that we stick to for client-server communication
@@ -22,7 +28,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
 from .game_session import GameSession
 from .client import Client
-from .msg_data import data_adaptor
+from .schemas.client_data import data_adaptor
 from pydantic import ValidationError
 
 api = FastAPI()
@@ -50,7 +56,10 @@ async def join_game_session(ws, client, game_session):
     game_session.add_client(client)
 
     if not game_session.full:
-        await ws.send_json({"message": "Waiting for more players"})
+        await ws.send_json({
+            'type': 'message', 
+            'data' : 'Waiting for more players'
+            })
     elif not game_session.running:
         await game_session.start()
 
@@ -60,8 +69,11 @@ async def handle_client_messages(ws, game_session):
         try:
             # converts json to pydantic BaseModel for automatic type checking
             client_data = data_adaptor.validate_python(json_data) 
-        except ValidationError as e:
-            await ws.send_json({"error": "Invalid data format", "detail": e.errors()})
+        except ValidationError:
+            await ws.send_json({
+                'type': 'error',
+                'data': 'Invalid data format'
+            })
             continue 
 
         if client_data.type == 'movement':
@@ -96,20 +108,32 @@ async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):
 def create_game(client_id: str, game_mode: str):
     if client_id not in clients:
         # placeholder for real return value
-        return {"error": "client id not found"}
+        return {
+            'type': 'error',
+            'data': 'client id not found'
+        }
     
     game_id = str(uuid4())
     try:
         game_sessions[game_id] = GameSession(game_mode, game_id)
-        return {"game_id": game_id}
+        return {
+            'type': 'game',
+            'data': {'game_id': game_id}
+        }
     except ValueError:
-        return ({"error": "Invalid game mode: {game_mode}"})
+        return {
+            'type': 'error',
+            'data': "Invalid game mode: {game_mode}"
+            }
     
 
 # creates a new client and returns their id
 @api.post("/games/client")
 def create_client(username, password):
-    id = str(uuid4())
+    client_id = str(uuid4())
     # need to perform some sort of check with a db here
-    clients[id] = Client(id, username, password)
-    return {'client_id': id}
+    clients[client_id] = Client(client_id, username, password)
+    return {
+            'type': 'client',
+            'data': {'client_id': client_id}
+        }

@@ -2,7 +2,7 @@ from .settings import *
 from .sprites import * 
 from .utils import Clock
 from abc import ABC, abstractmethod
-from server.msg_data import PaddleMovement
+from server_pong.server.schemas import PaddleMovement
 import asyncio
 
 class Game(ABC):
@@ -48,9 +48,12 @@ class Game(ABC):
 
     def get_state(self):
         return {
-            "paddle_left": {'y': self.players["left"].rect.y, 'score': self.players["left"].score,},
-            "paddle_right": {'y': self.players["right"].rect.y, 'score': self.players["right"].score,},
-            "ball": {'x': self.ball.rect.x, 'y': self.ball.rect.y},
+            'type' : 'state',
+            'data' : {
+                'paddle_left': {'y': self.players['left'].rect.y, 'score': self.players['left'].score,},
+                'paddle_right': {'y': self.players['right'].rect.y, 'score': self.players['right'].score,},
+                'ball': {'x': self.ball.rect.x, 'y': self.ball.rect.y},
+            }
         }
     
     def _state_changed(self):
@@ -65,8 +68,8 @@ class Game(ABC):
         while self.running:
             dt = await self.clock.tick(60) / 1000
             self._update_state(dt)
-            state = self.get_state()
             if (self._state_changed()):
+                state = self.get_state()
                 await self._broadcast(state)
 
 class SinglePlayer(Game):
