@@ -7,7 +7,7 @@ from abc import ABC
 
 class Paddle(ABC):
     def __init__(self):
-        self.rect = Rect(POS["left"][0], POS["left"][1], SIZE['paddle'][0], SIZE['paddle'][1])
+        self.rect = Rect(POS['left'][0], POS['left'][1], SIZE['paddle'][0], SIZE['paddle'][1])
         self.old_rect = self.rect.instance()
     
     def move(self, dt, dy):
@@ -85,7 +85,7 @@ class Ball():
             self.direction[1] *= -1
         
         if self.rect.right >= WINDOW_WIDTH or self.rect.left <= 0:
-            self.update_score("right" if self.rect.x < WINDOW_WIDTH / 2 else "left")
+            self.update_score('right' if self.rect.x < WINDOW_WIDTH / 2 else 'left')
             self.reset()
         
     def reset(self):

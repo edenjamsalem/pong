@@ -21,7 +21,7 @@ class GameSession:
 
         GameMode = game_modes.get(self.mode)
         if not GameMode:
-            raise ValueError(f"Invalid game mode: {GameMode}")
+            raise ValueError(f'Invalid game mode: {GameMode}')
             # maybe destroy here?
         
         self.game = GameMode(self.id, self.broadcast_callback)
@@ -58,11 +58,11 @@ class GameSession:
             await self.clients[0].websocket.send_json({
                 'type': 'side',
                 'data': 'left'
-                })
+            })
             await self.clients[1].websocket.send_json({
                 'type': 'side',
                 'data': 'right'
-                })
+            })
 
         elif self.mode == 'tournament':  # need to think how this will work for the tournament
             pass

@@ -74,7 +74,7 @@ class Game(ABC):
 
 class SinglePlayer(Game):
     def _init_players(self):
-        self.players = {"left": Player(POS['left']), "right": AIBot(POS['right'])}
+        self.players = {"left": Player(POS['left']), 'right': AIBot(POS['right'])}
 
     def _handle_input(self, dt):
         self._process_queue(dt) # handles player movement
@@ -83,7 +83,7 @@ class SinglePlayer(Game):
 # the current implementation should work for both local and remote players
 class TwoPlayer(Game):
     def _init_players(self):
-        self.players = {"left": Player(POS['left']), "right": Player(POS['right'])}
+        self.players = {'left': Player(POS['left']), 'right': Player(POS['right'])}
 
     def _handle_input(self, dt):
         self._process_queue(dt)

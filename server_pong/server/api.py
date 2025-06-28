@@ -39,17 +39,17 @@ clients = {}    # only temporay, we will use a db to store this
 
 async def validate_connection(ws: WebSocket, client_id: str, game_id: str):
     if client_id not in clients:
-        await ws.close(code=4004, reason="Client not recognised.")
+        await ws.close(code=4004, reason='Client not recognised.')
         return None, None
     if game_id not in game_sessions:
-        await ws.close(code=4004, reason="Game not found.")
+        await ws.close(code=4004, reason='Game not found.')
         return None, None
     
     return clients[client_id], game_sessions[game_id]
 
 async def join_game_session(ws, client, game_session):
     if game_session.full:
-        await ws.close(code=4004, reason="Game already full.")
+        await ws.close(code=4004, reason='Game already full.')
         return 
 
     client.websocket = ws
@@ -123,7 +123,7 @@ def create_game(client_id: str, game_mode: str):
     except ValueError:
         return {
             'type': 'error',
-            'data': "Invalid game mode: {game_mode}"
+            'data': 'Invalid game mode: {game_mode}'
             }
     
 
