@@ -3,15 +3,14 @@ from .sprites import *
 from .utils import Clock
 from abc import ABC, abstractmethod
 from server.schemas.client_data import PaddleMovement
-import asyncio
-from asyncio import QueueEmpty
+from asyncio import Queue, QueueEmpty
 
 class Game(ABC):
     def __init__(self, id, broadcast_callback):
         self.id = id    # see if actually needed later
         self._broadcast = broadcast_callback
         self.clock = Clock()
-        self.queue = asyncio.Queue()
+        self.queue = Queue()
         self.running = True
 
         # sprites 
