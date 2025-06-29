@@ -4,6 +4,7 @@ from .utils import Clock
 from abc import ABC, abstractmethod
 from server.schemas.client_data import PaddleMovement
 import asyncio
+from asyncio import QueueEmpty
 
 class Game(ABC):
     def __init__(self, id, broadcast_callback):
@@ -27,9 +28,12 @@ class Game(ABC):
 
     def _process_queue(self, dt):
         while not self.queue.empty():
-            input = self.queue.get_nowait()
-            self.players[input.side].move(dt, input.dy)
-
+            try:
+                input = self.queue.get_nowait()
+                self.players[input.side].move(dt, input.dy)
+            except QueueEmpty:
+                break
+            
     @abstractmethod
     def _handle_input(self, dt):
         pass
