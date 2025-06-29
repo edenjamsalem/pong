@@ -81,8 +81,8 @@ async def handle_client_messages(ws, game_session):
             # handle quit properly
             pass
 
-@api.websocket("/ws/{game_mode}/{game_id}")
-async def websocket_endpoint(ws: WebSocket, client_id: str, game_id: str):  
+@api.websocket("/ws/{game_id}/{client_id}")
+async def websocket_endpoint(ws: WebSocket, game_id: str, client_id: str):  
 
     # initial connection
     client, game_session = await validate_connection(ws, client_id, game_id)
@@ -121,7 +121,7 @@ async def create_game(client_id: str, game_mode: str):
     except ValueError:
         return {
             'type': 'error',
-            'data': 'Invalid game mode: {game_mode}'
+            'data': f'Invalid game mode: {game_mode}'
         }
     
 

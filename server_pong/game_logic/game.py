@@ -29,7 +29,6 @@ class Game(ABC):
         while not self.queue.empty():
             input = self.queue.get_nowait()
             self.players[input.side].move(dt, input.dy)
-            self.queue.task_done()
 
     @abstractmethod
     def _handle_input(self, dt):
